@@ -1,10 +1,16 @@
 class PyForgeError(Exception):
-    """Base exception for PyForge."""
-
-
-class ValidationError(PyForgeError):
-    """Raised when validation fails."""
+    """
+    Base exception for all PyForge exceptions.
+    """
 
 
 class ConfigurationError(PyForgeError):
-    """Raised when configuration is invalid."""
+    """
+    Raised when configuration is invalid.
+    """
+
+
+class ValidationError(PyForgeError):
+    """
+    Raised when request validation fails.
+    """

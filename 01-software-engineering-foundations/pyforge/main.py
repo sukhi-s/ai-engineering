@@ -8,7 +8,8 @@ def main():
 
     request = ChatRequest(
         model="demo-model",
-        prompt="Hello PyForge"
+        prompt="Hello PyForge",
+        temperature=0.7
     )
 
     response = client.chat(request)
