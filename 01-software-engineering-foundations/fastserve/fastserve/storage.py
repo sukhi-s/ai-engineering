@@ -1,0 +1,3 @@
+PROMPTS = {}
+
+CURRENT_ID = 1
