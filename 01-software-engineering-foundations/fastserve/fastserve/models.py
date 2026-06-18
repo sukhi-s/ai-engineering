@@ -1,5 +1,12 @@
 from pydantic import BaseModel
 
 
-class MessageResponse(BaseModel):
-    message: str
+class PromptCreate(BaseModel):
+    title: str
+    content: str
+
+
+class PromptResponse(BaseModel):
+    id: int
+    title: str
+    content: str

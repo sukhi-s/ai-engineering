@@ -2,13 +2,13 @@
 
 ## Overview
 
-FastServe is a foundational software engineering project focused on understanding how web APIs are built using FastAPI.
+FastServe is a FastAPI-based backend service that exposes a REST API for managing prompts.
 
-Modern AI systems are typically exposed through APIs. Services such as OpenAI, Anthropic, Pinecone, Weaviate, and many others receive requests over HTTP, process them, and return structured responses.
+The project is designed to teach the foundations of backend engineering that are commonly used in AI systems and developer platforms.
 
-FastServe demonstrates the core architecture behind these systems by building a simple API service that accepts requests and returns responses.
+Instead of building a simple "Hello World" API, FastServe implements a Prompt Vault where prompts can be created, retrieved, updated, listed, and deleted through HTTP endpoints.
 
-The project focuses on routing, request handling, response generation, and API design.
+The project introduces the architecture patterns found in production systems, including routing, validation, service layers, and storage layers.
 
 ---
 
@@ -16,17 +16,25 @@ The project focuses on routing, request handling, response generation, and API d
 
 This project introduces:
 
-* HTTP fundamentals
-* REST APIs
 * FastAPI
-* Request routing
-* Request models
-* Response models
+* REST APIs
+* HTTP requests and responses
+* CRUD operations
 * Pydantic validation
+* Route design
+* Service layer architecture
+* Storage abstraction
 * API documentation
-* Client-server architecture
+* Backend application structure
 
-These concepts form the foundation of most modern AI platforms and backend systems.
+These concepts form the foundation of:
+
+* AI APIs
+* RAG services
+* Agent platforms
+* Evaluation systems
+* Prompt management systems
+* Internal developer tooling
 
 ---
 
@@ -43,7 +51,8 @@ fastserve/
     ├── main.py
     ├── routes.py
     ├── models.py
-    └── config.py
+    ├── service.py
+    └── storage.py
 ```
 
 ---
@@ -52,22 +61,27 @@ fastserve/
 
 ```text
 Client
-   │
-   ▼
+  │
+  ▼
 HTTP Request
-   │
-   ▼
-FastAPI Route
-   │
-   ▼
-Business Logic
-   │
-   ▼
-Response Model
-   │
-   ▼
+  │
+  ▼
+Route Layer
+  │
+  ▼
+Validation Layer
+  │
+  ▼
+Service Layer
+  │
+  ▼
+Storage Layer
+  │
+  ▼
 HTTP Response
 ```
+
+Each layer has a single responsibility.
 
 ---
 
@@ -75,85 +89,172 @@ HTTP Response
 
 ### main.py
 
-Creates and configures the FastAPI application.
+Application entry point.
 
 Responsibilities:
 
-* Application startup
-* Route registration
-* API initialization
+* Create FastAPI application
+* Register routes
+* Start API service
 
 ---
 
 ### routes.py
 
-Defines API routes and endpoint logic.
+API endpoint definitions.
 
 Responsibilities:
 
 * Receive requests
-* Execute functionality
+* Validate incoming data
+* Call service functions
 * Return responses
+
+Example endpoints:
+
+```http
+POST /prompts
+GET /prompts
+GET /prompts/{prompt_id}
+PUT /prompts/{prompt_id}
+DELETE /prompts/{prompt_id}
+```
 
 ---
 
 ### models.py
 
-Defines request and response schemas.
+Pydantic data models.
 
 Responsibilities:
 
-* Data validation
-* Type checking
-* Response serialization
+* Request validation
+* Response validation
+* Type safety
+
+Example models:
+
+```text
+PromptCreate
+PromptUpdate
+PromptResponse
+```
 
 ---
 
-### config.py
+### service.py
 
-Stores application configuration.
+Business logic layer.
 
 Responsibilities:
 
-* Default settings
-* Environment configuration
-* Application constants
+* Create prompts
+* Retrieve prompts
+* Update prompts
+* Delete prompts
+
+The service layer contains application behaviour and business rules.
 
 ---
 
-### **init**.py
+### storage.py
 
-Marks the directory as a Python package.
+Storage abstraction layer.
+
+Responsibilities:
+
+* Persist data
+* Retrieve stored data
+
+For Version 1, prompts are stored in memory using a Python dictionary.
+
+Future versions may use:
+
+* SQLite
+* PostgreSQL
+* DynamoDB
+* Redis
+
+without changing the service layer.
+
+---
+
+## API Endpoints
+
+### Create Prompt
+
+```http
+POST /prompts
+```
+
+Creates a new prompt.
+
+---
+
+### List Prompts
+
+```http
+GET /prompts
+```
+
+Returns all prompts.
+
+---
+
+### Get Prompt
+
+```http
+GET /prompts/{prompt_id}
+```
+
+Returns a specific prompt.
+
+---
+
+### Update Prompt
+
+```http
+PUT /prompts/{prompt_id}
+```
+
+Updates an existing prompt.
+
+---
+
+### Delete Prompt
+
+```http
+DELETE /prompts/{prompt_id}
+```
+
+Removes a prompt.
 
 ---
 
 ## Execution Flow
 
-When a user accesses:
-
-```http
-GET /
-```
-
-the following process occurs:
+Creating a prompt:
 
 ```text
-Browser
-   │
-   ▼
-FastAPI Server
-   │
-   ▼
-Route Handler
-   │
-   ▼
-Business Logic
-   │
-   ▼
-Response Model
-   │
-   ▼
-JSON Response
+Client
+  │
+  ▼
+POST /prompts
+  │
+  ▼
+Route
+  │
+  ▼
+Pydantic Validation
+  │
+  ▼
+Service Layer
+  │
+  ▼
+Storage Layer
+  │
+  ▼
+Response
 ```
 
 ---
@@ -172,17 +273,11 @@ Start the server:
 uvicorn fastserve.main:app --reload
 ```
 
-The API will be available at:
-
-```text
-http://127.0.0.1:8000
-```
-
 ---
 
-## Interactive Documentation
+## Interactive API Documentation
 
-FastAPI automatically generates interactive API documentation.
+FastAPI automatically generates API documentation.
 
 Open:
 
@@ -190,37 +285,14 @@ Open:
 http://127.0.0.1:8000/docs
 ```
 
-This interface allows endpoints to be explored and tested directly from the browser.
-
----
-
-## Example Response
-
-Request:
-
-```http
-GET /
-```
-
-Response:
-
-```json
-{
-  "message": "Hello from FastServe"
-}
-```
+The documentation allows every endpoint to be tested directly from the browser.
 
 ---
 
 ## Key Takeaway
 
-FastServe demonstrates how applications receive requests, route them to the appropriate functionality, and return structured responses.
+FastServe demonstrates how modern backend services are structured.
 
-This request-response architecture forms the foundation of:
+The project introduces layered architecture where responsibilities are separated into routes, models, services, and storage.
 
-* AI APIs
-* RAG services
-* Agent platforms
-* Model serving systems
-* Enterprise AI applications
-* Backend microservices
+This same pattern appears in production AI systems, including RAG applications, agent platforms, model gateways, and evaluation frameworks.

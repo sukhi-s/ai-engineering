@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 
-from fastserve.routes import hello
+from .routes import router
 
-app = FastAPI()
+app = FastAPI(
+    title="FastServe"
+)
 
-
-@app.get("/")
-def root():
-    return hello()
+app.include_router(router)
